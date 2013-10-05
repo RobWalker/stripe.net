@@ -36,7 +36,17 @@ namespace Stripe
 		{
 			var url = string.Format("{0}/{1}", Urls.Plans, planId);
 
-			Requestor.Delete(url);
+			Requestor.Delete(url, ApiKey);
+		}
+
+		public virtual StripePlan Update(string planId, StripePlanUpdateOptions updateOptions)
+		{
+			var url = string.Format("{0}/{1}", Urls.Plans, planId);
+			url = ParameterBuilder.ApplyAllParameters(updateOptions, url);
+
+			var response = Requestor.PostString(url, ApiKey);
+
+			return Mapper<StripePlan>.MapFromJson(response);
 		}
 
 		public virtual IEnumerable<StripePlan> List(int count = 10, int offset = 0)

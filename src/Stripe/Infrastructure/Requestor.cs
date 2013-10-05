@@ -22,6 +22,13 @@ namespace Stripe
 			return ExecuteWebRequest(wr);
 		}
 
+		public static string PostStringBearer(string url, string apiKey = null)
+		{
+			var wr = GetWebRequest(url, "POST", apiKey, true);
+
+			return ExecuteWebRequest(wr);
+		}
+
 		public static string Delete(string url, string apiKey = null)
 		{
 			var wr = GetWebRequest(url, "DELETE", apiKey);
@@ -29,13 +36,18 @@ namespace Stripe
 			return ExecuteWebRequest(wr);
 		}
 
-		private static WebRequest GetWebRequest(string url, string method, string apiKey = null)
+		private static WebRequest GetWebRequest(string url, string method, string apiKey = null, bool useBearer = false)
 		{
 			apiKey = apiKey ?? StripeConfiguration.GetApiKey();
 
 			var request = (HttpWebRequest)WebRequest.Create(url);
 			request.Method = method;
-			request.Headers.Add("Authorization", GetAuthorizationHeaderValue(apiKey));
+
+			if(!useBearer)
+				request.Headers.Add("Authorization", GetAuthorizationHeaderValue(apiKey));
+			else
+				request.Headers.Add("Authorization", GetAuthorizationHeaderValueBearer(apiKey));
+
 			request.ContentType = "application/x-www-form-urlencoded";
 			request.UserAgent = "Stripe.net (https://github.com/jaymedavis/stripe.net)";
 
@@ -46,6 +58,11 @@ namespace Stripe
 		{
 			var token = Convert.ToBase64String(Encoding.UTF8.GetBytes(string.Format("{0}:", apiKey)));
 			return string.Format("Basic {0}", token);
+		}
+
+		private static string GetAuthorizationHeaderValueBearer(string apiKey)
+		{
+			return string.Format("Bearer {0}", apiKey);
 		}
 
 		private static string ExecuteWebRequest(WebRequest webRequest)
@@ -62,7 +79,13 @@ namespace Stripe
 				if (webException.Response != null)
 				{
 					var statusCode = ((HttpWebResponse)webException.Response).StatusCode;
-					var stripeError = Mapper<StripeError>.MapFromJson(ReadStream(webException.Response.GetResponseStream()), "error");
+					
+					var stripeError = new StripeError();
+
+					if(webRequest.RequestUri.ToString().Contains("oauth"))
+						stripeError = Mapper<StripeError>.MapFromJson(ReadStream(webException.Response.GetResponseStream()));
+					else
+						stripeError = Mapper<StripeError>.MapFromJson(ReadStream(webException.Response.GetResponseStream()), "error");
 
 					throw new StripeException(statusCode, stripeError, stripeError.Message);
 				}

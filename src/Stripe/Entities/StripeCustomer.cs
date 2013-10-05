@@ -12,6 +12,9 @@ namespace Stripe
 		[JsonProperty("email")]
 		public string Email { get; set; }
 
+		[JsonProperty("account_balance")]
+		public int? AccountBalance { get; set; }
+
 		[JsonProperty("description")]
 		public string Description { get; set; }
 
@@ -25,8 +28,8 @@ namespace Stripe
 		[JsonProperty("deleted")]
 		public bool? Deleted { get; set; }
 
-		[JsonProperty("next_recurring_charge")]
-		public StripeNextRecurringCharge StripeNextRecurringCharge { get; set; }
+		[JsonProperty("delinquent")]
+		public bool? Delinquent { get; set; }
 
 		[JsonProperty("discount")]
 		public StripeDiscount StripeDiscount { get; set; }
@@ -34,7 +37,10 @@ namespace Stripe
 		[JsonProperty("subscription")]
 		public StripeSubscription StripeSubscription { get; set; }
 
-		[JsonProperty("active_card")]
-		public StripeCard StripeCard { get; set; }
+		[JsonProperty("default_card")]
+		public string StripeDefaultCardId { get; set; }
+
+		[JsonProperty("cards")]
+		public StripeCardList StripeCardList { get; set; }
 	}
 }

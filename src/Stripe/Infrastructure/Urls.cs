@@ -36,10 +36,15 @@
 		{
 			get { return BaseUrl + "/plans"; }
 		}
-		
+
 		public static string Customers
 		{
 			get { return BaseUrl + "/customers"; }
+		}
+
+		public static string Cards
+		{
+			get { return BaseUrl + "/customers/{0}/cards"; }
 		}
 
 		public static string Events
@@ -52,9 +57,24 @@
             get { return BaseUrl + "/transfers"; }
         }
         
-        private static string BaseUrl
+		public static string Account
+		{
+			get { return BaseUrl + "/account"; }
+		}
+
+		private static string BaseUrl
 		{
 			get { return "https://api.stripe.com/v1"; }
+		}
+
+		public static string OAuthToken
+		{
+			get { return BaseConnectUrl + "/oauth/token"; }
+		}
+
+		private static string BaseConnectUrl
+		{
+			get { return "https://connect.stripe.com"; }
 		}
 	}
 }

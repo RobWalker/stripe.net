@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+
 namespace Stripe
 {
 	public class StripeChargeCreateOptions : CreditCardOptions
@@ -17,5 +18,11 @@ namespace Stripe
 
 		[JsonProperty("customer")]
 		public string CustomerId { get; set; }
+
+		[JsonProperty("capture")]
+		public bool? Capture { get; set; }
+
+		[JsonProperty("card")]
+		public string Card { get; set; }
 	}
 }

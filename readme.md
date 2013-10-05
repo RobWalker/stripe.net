@@ -6,6 +6,7 @@ Charges, Subscriptions, Invoices, and Events.
 
 For more information about the examples below, you can visit https://stripe.com/docs/api for a full reference.
 
+<a href='http://www.pledgie.com/campaigns/22262'><img alt='Click here to lend your support to: stripe.net and make a donation at www.pledgie.com !' src='http://www.pledgie.com/campaigns/22262.png?skin_name=chrome' border='0' /></a>
 
 Quick Start
 -----------
@@ -55,6 +56,15 @@ If your site has multiple offerings, plans are perfect. You can create as many p
 
 The returned StripePlan entity above will have a unique Id. You will want to persist this for later. When you create a customer you will be able to assign them 
 to a plan id (or not)
+
+### Updating a plan
+
+	var myPlan = new StripePlanUpdateOptions();
+
+	myPlan.Name = "NEW Plan YO!";
+
+	var planService = new StripePlanService();
+	StripePlan response = planService.Update(*planId*, myPlan);
 
 ### Retrieving a plan
 
@@ -113,6 +123,8 @@ A token can be used anywhere on Stripe where you would normally pass a card. Onc
 customer or a charge, but only used once.
 
 	var myToken = new StripeTokenCreateOptions();
+
+	// set these properties if using a card
 	myToken.CardAddressCountry = "US";
 	myToken.CardAddressLine1 = "24 Portal St";
 	myToken.CardAddressLine2 = "Unit B";
@@ -124,13 +136,14 @@ customer or a charge, but only used once.
 	myToken.CardExpirationYear = "2012";
 	myToken.CardName = "Gabe Newell";
 	myToken.CardNumber = "4242424242424242";
-	myToken.AmountInCents = 5153;
-	myToken.Currency = "usd";
+	
+	// set this property if using a customer (stripe connect only)
+	myToken.CustomerId = *customerId*;
 
 	var tokenService = new StripeTokenService();
 	StripeToken stripeToken = tokenService.Create(myToken);
 
-Tokens are very useful if you don't want to store the customers credit card information on your servers (very good for pci compliance).
+Tokens are very useful if you don't want to store the customers credit card information on your servers (pci compliance).
 
 ### Retrieving a token
 
@@ -179,7 +192,7 @@ Don't let this be intimidating - all of these fields are optional. You could jus
 
 ### Updating a customer
 
-	var myCustomer = new StripeCustomerUpdateOptions()
+	var myCustomer = new StripeCustomerUpdateOptions();
 
 	// set these properties if it makes you happy
 	myCustomer.Email = "pork@email.com";
@@ -199,6 +212,9 @@ Don't let this be intimidating - all of these fields are optional. You could jus
 
 	// set this property if using a token
 	myCustomer.TokenId = *tokenId*;
+
+	// this will set the default card to use for this customer
+	myCustomer.DefaultCard = *cardId*;
 
 	myCustomer.Coupon = *couponId*;    // only if you have a coupon
 
@@ -247,12 +263,71 @@ Customers that are deleted can still be retrieved through the api. The Deleted p
 	myUpdatedSubscription.Quantity = 1;                             // optional, defaults to 1
 
 	var customerService = new StripeCustomerService();
-	StripeSubscription = customerService.UpdateSubscription(*customerId*, myUpdatedSubscription);
+	StripeSubscription subscription = customerService.UpdateSubscription(*customerId*, myUpdatedSubscription);
 
 ### Canceling a customer subscription
 
 	var customerService = new StripeCustomerService();
-	StripeSubscription = customerService.CancelSubscription(*customerId*);    // you can optionally pass cancelAtPeriodEnd instead of immediately cancelling 
+	StripeSubscription subscription = customerService.CancelSubscription(*customerId*);    // you can optionally pass cancelAtPeriodEnd instead of immediately cancelling 
+
+Cards
+-----
+
+### Creating a card
+
+When creating a card you can use either a card or a token
+
+	var myCard = new StripeCardCreateOptions();
+
+	// set these properties if using a card
+	myCard.CardNumber = "4242424242424242";
+	myCard.CardExpirationYear = "2015";
+	myCard.CardExpirationMonth = "10";
+	myCard.CardAddressCountry = "US";               // optional
+	myCard.CardAddressLine1 = "24 Beef Flank St"    // optional
+	myCard.CardAddressLine2 = "Apt 24";             // optional
+	myCard.CardAddressState = "NC";                 // optional
+	myCard.CardAddressZip = "27617";                // optional
+	myCard.CardName = "Joey Pepperoni Smith";       // optional
+	myCard.CardCvc = "1223";                        // optional
+
+	// set this property if using a token
+	myCard.TokenId = *tokenId*;
+
+	var cardService = new StripeCardService();
+	StripeCard stripeCard = cardService.Create(*customerId*, myCard);
+
+### Retrieving a card
+
+	var cardService = new StripeCardService();
+	StripeCard stripeCard = cardService.Get(*customerId*, *cardId*);
+
+### Updating a card
+
+	var myCard = new StripeCardUpdateOptions();
+
+	myCard.Name = "Cardy MyCardson"
+	myCard.ExpirationYear = "2016";
+	myCard.ExpirationMonth = "10";
+	myCard.AddressCountry = "US";
+	myCard.AddressLine1 = "1234 ComeOnBabySayYouLoveMe St";
+	myCard.AddressLine2 = "";
+	myCard.AddressState = "NC";
+	myCard.AddressCity = "Raleigh"
+	myCard.AddressZip = "27617";
+
+	var cardService = new StripeCardService();
+	StripeCard stripeCard = cardService.Update(*customerId*, *cardId*, myCard);
+
+### Deleting a card
+
+	var cardService = new StripeCardService();
+	cardService.Delete(*customerId*, *cardId*);
+
+### List all cards
+
+	var cardService = new StripeCardService();
+	IEnumerable<StripeCard> response = cardService.List(*customerId*);    // can optionally pass count (defaults to 10) and offset
 
 Charges
 -------
@@ -288,8 +363,14 @@ When creating a charge you can use either a card, customer, or a token. Only one
 	// set this property if using a token
 	myCharge.TokenId = *tokenId*;
 
+	// set this property if using a card
+	myCharge.Card = *cardId*;
+
 	// set this if you have your own application fees (you must have your application configured first within Stripe)
 	myCharge.ApplicationFeeInCents = 25;
+
+	// (not required) set this to false if you don't want to capture the charge yet - requires you call capture later
+	myCharge.Capture = true;
 
 	var chargeService = new StripeChargeService();
 	StripeCharge stripeCharge = chargeService.Create(myCharge);
@@ -304,7 +385,14 @@ When creating a charge you can use either a card, customer, or a token. Only one
 If you do not specify an amountInCents, the entire charge is refunded. The StripeCharge entity has properties for "Refunded" (bool) and RefundedAmountInCents.
 
 	var chargeService = new StripeChargeService();
-	StripeCharge stripeCharge = chargeService.Refund(*chargeId*, *amountInCents*);
+	StripeCharge stripeCharge = chargeService.Refund(*chargeId*, *amountInCents*, *refundApplicationFee*);
+
+### Capturing a charge
+
+If you set a charge to capture = false, you use this to capture the charge later. *amountInCents* and *applicationFeeInCents* are not required.
+
+	var chargeService = new StripeChargeService();
+	StripeCharge stripeCharge = chargeService.Capture(*chargeId*, *amountInCents*, *applicationFeeInCents*);
 
 ### List all charges
 
@@ -323,6 +411,19 @@ Invoices
 
 	var invoiceService = new StripeInvoiceService();
 	StripeInvoice response = invoiceService.Upcoming(*customerId*);
+
+### Create a customer invoice
+
+	var invoiceService = new StripeInvoiceService();
+	StripeInvoice response = invoiceService.Create(*customerId*);
+
+### Updating a customer invoice
+
+	var stripeInvoiceUpdateOptions = new StripeInvoiceUpdateOptions();
+	stripeInvoiceUpdateOptions.Closed = true;
+
+	var invoiceService = new StripeInvoiceService();
+	StripeInvoice response = invoiceService.Update(stripeInvoiceUpdateOptions);
 
 ### List all invoices
 
@@ -370,6 +471,24 @@ Any invoice items you create for a customer will be added to their bill.
 	var invoiceItemService = new StripeInvoiceItemService();
 	IEnumerable<StripeInvoiceItem> response = invoiceItemService.List();    // can optionally pass count (defaults to 10), offset, and a customerid
 
+Account
+-------
+
+### Retrieving your account
+
+	var accountService = new StripeAccountService();
+	StripeAccount response = accountService.Get();
+
+Disputes
+--------
+
+### Updating a dispute
+
+	var disputeService = new StripeDisputeService();
+
+	// providing the dispute reason is optional
+	StripeDispute stripeDispute = disputeService.Update(*chargeId*, "customer ate the donut before I charged them, so they said it was free"); 
+
 Events
 ------
 
@@ -397,7 +516,7 @@ Stripe sends Events (or webhooks) whenever an associated action occurs. The list
 				switch (stripeEvent.Type)
 				{
 					case "charge.refunded":  // take a look at all the types here: https://stripe.com/docs/api#event_types
-						var stripeCharge = Stripe.Mapper<StripeCharge>.MapFromJson(stripeEvent.Data.Object);
+						var stripeCharge = Stripe.Mapper<StripeCharge>.MapFromJson(stripeEvent.Data.Object.ToString());
 						break;
 				}
 			}
@@ -441,6 +560,12 @@ You can also optionally pass a StripeSearchEventOptions which supports a specifi
 	
 	IEnumerable<StripeEvent> response = eventService.List(10, 0, eventSearchOptions);
 	
+
+Stripe Connect
+--------------
+
+For information about how to use Stripe Connect, see this comment https://github.com/jaymedavis/stripe.net/pull/43#issuecomment-10903921
+
 Errors
 ------
 
@@ -448,3 +573,4 @@ Any errors that occur on any of the services will throw a StripeException with t
 
 The StripeException contains and HttpStatusCode and a StripeError entity. The StripeError entity contains the type, message, code and param. For more infomation, review the Errors section
 of stripe here: https://stripe.com/docs/api#errors
+[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/5f9bbd19e41d91cc092ebec6ff4bb40c "githalytics.com")](http://githalytics.com/jaymedavis/stripe.net)

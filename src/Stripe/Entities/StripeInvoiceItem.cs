@@ -24,5 +24,14 @@ namespace Stripe
 
 		[JsonProperty("description")]
 		public string Description { get; set; }
+
+		[JsonProperty("quantity")]
+		public int? Quantity { get; set; }
+
+		[JsonProperty("plan")]
+		public StripePlan Plan { get; set; }
+
+		[JsonProperty("period")]
+		public StripePeriod Period { get; set; }
 	}
 }

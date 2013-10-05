@@ -16,10 +16,11 @@ namespace Stripe.Tests.test_data
 				Email = "pork@email.com",
 				CardCvc = "1661",
 				CardExpirationMonth = "10",
-				CardExpirationYear = "2012",
+				CardExpirationYear = "2021",
 				CardName = "Johnny Tenderloin",
 				CardNumber = "4242424242424242",
 				Description = "Johnny Tenderloin (pork@email.com)",
+				AccountBalance = 100
 			};
 
 			if (_planId != null)
@@ -30,6 +31,14 @@ namespace Stripe.Tests.test_data
 
 			if (_trialEnd != null)
 				stripeCustomerCreateOptions.TrialEnd = _trialEnd;
+
+			return stripeCustomerCreateOptions;
+		}
+
+		public static StripeCustomerCreateOptions ValidCardButChargeFails(string _planId = null, string _couponId = null, DateTime? _trialEnd = null)
+		{
+			var stripeCustomerCreateOptions = ValidCard(_planId, _couponId, _trialEnd);
+			stripeCustomerCreateOptions.CardNumber = "4000000000000341";
 
 			return stripeCustomerCreateOptions;
 		}

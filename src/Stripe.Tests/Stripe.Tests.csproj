@@ -53,18 +53,29 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="account\account_behaviors.cs" />
+    <Compile Include="account\when_retrieving_an_account.cs" />
     <Compile Include="charges\charge_behaviors.cs" />
+    <Compile Include="charges\when_capturing_a_charge_with_a_card.cs" />
+    <Compile Include="charges\when_setting_a_charge_to_capture.cs" />
+    <Compile Include="charges\when_creating_a_charge_with_an_invalid_card.cs" />
     <Compile Include="charges\when_creating_a_charge_with_a_card_and_an_application_fee.cs" />
     <Compile Include="charges\when_creating_a_charge_with_a_token.cs" />
     <Compile Include="charges\when_listing_charges_for_customer.cs" />
     <Compile Include="charges\when_listing_charges.cs" />
     <Compile Include="charges\when_creating_a_charge_with_an_api_key.cs" />
+    <Compile Include="coupons\when_creating_a_coupon_with_amount_off.cs" />
     <Compile Include="coupons\when_creating_a_coupon_with_an_api_key.cs" />
     <Compile Include="customers\when_creating_a_customer_with_an_api_key.cs" />
     <Compile Include="invoiceitems\when_creating_an_invoiceitem_with_an_api_key.cs" />
+    <Compile Include="invoices\when_closing_an_invoice.cs" />
     <Compile Include="invoices\when_creating_an_invoice_with_an_api_key.cs" />
+    <Compile Include="invoices\when_creating_an_invoice_with_failed_charge.cs" />
+    <Compile Include="plans\test_data\stripe_plan_update_options.cs" />
+    <Compile Include="plans\when_updating_a_plan.cs" />
     <Compile Include="plans\when_creating_a_plan_with_an_interval_count.cs" />
     <Compile Include="plans\when_creating_a_plan_with_an_api_key.cs" />
+    <Compile Include="tokens\when_creating_a_token_with_a_customer.cs" />
     <Compile Include="tokens\when_creating_a_token_with_an_api_key.cs" />
     <Compile Include="_web_event_hooks\App_Code\event_hooks_handler.cs" />
     <Compile Include="invoices\when_getting_an_invoice.cs" />
@@ -113,6 +124,7 @@
     <Compile Include="customers\test_data\stripe_customer_create_options.cs" />
     <Compile Include="plans\when_creating_a_plan.cs" />
     <Compile Include="customers\when_creating_a_customer.cs" />
+    <Compile Include="oauth\when_creating_an_invalid_oauth_token_request.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Stripe\Stripe.csproj">
