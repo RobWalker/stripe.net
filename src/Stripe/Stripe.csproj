@@ -50,6 +50,7 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Entities\StripeBalance.cs" />
     <Compile Include="Entities\StripeFee.cs" />
     <Compile Include="Entities\StripeEventData.cs" />
     <Compile Include="Entities\StripeEvent.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="Infrastructure\StripeDateTimeConverter.cs" />
     <Compile Include="Infrastructure\Mapper.cs" />
     <Compile Include="Entities\StripeCustomer.cs" />
+    <Compile Include="Services\Balance\StripeBalanceService.cs" />
     <Compile Include="Services\Events\StripeEventSearchOptions.cs" />
     <Compile Include="Services\Events\StripeEventService.cs" />
     <Compile Include="Services\Events\StripeEventUtility.cs" />
@@ -97,6 +99,7 @@
     <Compile Include="Infrastructure\Urls.cs" />
     <Compile Include="Infrastructure\ParameterBuilder.cs" />
     <Compile Include="Infrastructure\Requestor.cs" />
+    <Compile Include="Services\Transfer\StripeTransferService.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

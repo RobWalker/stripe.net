@@ -17,6 +17,11 @@
 			get { return BaseUrl + "/tokens"; }
 		}
 
+        public static string Balance
+        {
+            get { return BaseUrl + "/balance"; }
+        }
+
 		public static string Charges
 		{
 			get { return BaseUrl + "/charges"; }
@@ -42,7 +47,12 @@
 			get { return BaseUrl + "/events"; }
 		}
 
-		private static string BaseUrl
+        public static string Transfers
+        {
+            get { return BaseUrl + "/transfers"; }
+        }
+        
+        private static string BaseUrl
 		{
 			get { return "https://api.stripe.com/v1"; }
 		}
