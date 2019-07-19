@@ -1,1 +1,0 @@
-tools\nuget\nuget pack Stripe.net.nuspec -o build
